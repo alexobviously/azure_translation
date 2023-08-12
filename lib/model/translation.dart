@@ -1,14 +1,17 @@
 class TranslationResult {
+  final String original;
   final List<Translation> translations;
   final DetectedLanguage? detectedLanguage;
 
   const TranslationResult({
+    required this.original,
     required this.translations,
     this.detectedLanguage,
   });
 
   factory TranslationResult.fromJson(Map<String, dynamic> json) =>
       TranslationResult(
+        original: json['original'],
         translations: List<Translation>.from(
             json['translations'].map((x) => Translation.fromJson(x))),
         detectedLanguage: json.containsKey('detectedLanguage')
@@ -22,7 +25,7 @@ class TranslationResult {
       translations.where((e) => e.to == to).firstOrNull?.text;
 
   @override
-  String toString() => 'TranslationResult($translations)';
+  String toString() => 'TranslationResult($original, $translations)';
 }
 
 class Translation {

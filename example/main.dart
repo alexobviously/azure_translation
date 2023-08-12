@@ -21,7 +21,7 @@ void main(List<String> queries) async {
     return;
   }
   final translations = res.object!;
-  for (final (i, q) in queries.indexed) {
-    print('$q: ${translations[i].map}');
+  for (final t in translations) {
+    print('${t.original}: ${t.translations}');
   }
 }

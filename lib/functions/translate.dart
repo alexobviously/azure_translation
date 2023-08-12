@@ -41,7 +41,12 @@ Future<Result<List<TranslationResult>, AzureTranslationError>> translate(
 
   return Result.ok(
     List<TranslationResult>.from(
-      jsonDecode(res.body).map((x) => TranslationResult.fromJson(x)),
+      (jsonDecode(res.body) as List).indexed.map(
+            (x) => TranslationResult.fromJson({
+              ...x.$2,
+              'original': text[x.$1],
+            }),
+          ),
     ),
   );
 }
