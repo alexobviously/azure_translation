@@ -10,8 +10,8 @@ void main(List<String> queries) async {
 
   final res = await translate(
     queries,
-    from: 'en',
-    to: ['vi', 'zh', 'ru'],
+    baseLanguage: 'en',
+    languages: ['vi', 'zh', 'ru'],
     key: key,
     region: region,
   );

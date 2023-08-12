@@ -4,7 +4,12 @@ import 'package:azure_translation/azure_translation.dart';
 import 'package:elegant/elegant.dart';
 import 'package:http/http.dart' as http;
 
-Future<Result<LanguageList, int>> languages({
+/// Returns a list of supported languages for translation, transliteration, and
+/// dictionary lookup.
+/// [scopes] can be omitted, in which case all three scopes will be returned.
+/// [baseLanguage] can optionally be provided, and the names of returned
+/// languages will be translated into it.
+Future<Result<LanguageList, AzureTranslationError>> languages({
   String? baseLanguage,
   Iterable<LanguageScope>? scopes,
 }) async {
@@ -25,7 +30,7 @@ Future<Result<LanguageList, int>> languages({
   final res = await http.get(uri, headers: headers);
 
   if (res.statusCode != 200) {
-    return Result.error(res.statusCode);
+    return Result.error(AzureTranslationError.fromResponse(res));
   }
 
   final json = jsonDecode(res.body);

@@ -8,7 +8,7 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
-  elegant: ^0.0.1
+  elegant: ^0.0.2
   http: ^1.1.0
   # path: ^1.8.0
 
