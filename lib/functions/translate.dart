@@ -28,7 +28,7 @@ Future<Result<List<TranslationResult>, AzureTranslationError>> translate(
   final headers = {
     'Ocp-Apim-Subscription-Key': key,
     'Ocp-Apim-Subscription-Region': region,
-    'Content-type': 'application/json',
+    'Content-Type': 'application/json',
   };
 
   final texts = text.map((e) => {'text': e}).toList();

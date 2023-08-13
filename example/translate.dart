@@ -13,7 +13,7 @@ const _targetLangs = ['vi', 'zh', 'ru'];
 void main(List<String> queries) async {
   final (key, region) = loadEnv();
   final langListResult = await languages();
-  print(langListResult);
+  print(langListResult.object?.transliteration?.join('\n'));
 
   final res = await translate(
     queries,

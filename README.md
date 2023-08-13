@@ -1,14 +1,15 @@
-## A wrapper for interacting with Azure's translation API.
+# A wrapper for interacting with Azure's translation API.
 
 Currently supports:
 * Listing languages
 * Translation
 * Language detection
+* Breaking sentences
 
 Coming soon:
 * Transliteration
 
-### Listing Languages
+## Listing Languages
 [Azure Reference](https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-languages)  
 
 Listing languages is simple:
@@ -37,7 +38,9 @@ print(langs.translationLanguage('en'));
 // Language(en, Anglais, English, ltr)
 ```
 
-### Translation
+## Translation
+[Azure Reference](https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-translate)  
+
 Docs coming soon but this is self explanatory for now:
 ```dart
 import 'package:azure_translation/azure_translation.dart' as at;
@@ -54,7 +57,9 @@ print(res.object!.join('\n'));
 // TranslationResult(good morning, [fr: Bonjour, vi: Xin chào, ar: صباح الخير])
 ```
 
-### Language Detection
+## Language Detection
+[Azure Reference](https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-detect)  
+
 Docs coming soon but this is self explanatory for now:
 ```dart
 final res = await detect(
@@ -70,7 +75,26 @@ print(res.object!.first.scores);
 // {fr: 1.0}
 ```
 
-### Error handling
+## Breaking Sentences
+[Azure Reference](https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-break-sentence)  
+
+Docs coming soon but this is self explanatory for now:
+```dart
+final res = await breakSentence(
+    [
+        'How are you? I am fine. What did you do today?',
+        '¿hola, cómo estás? ¿Donde está la biblioteca?',
+    ],
+    key: key,
+    region: region,
+);
+print(res.object!.join('\n'));
+// BrokenSentence([How are you? , I am fine. , What did you do today?])
+// BrokenSentence([¿hola, cómo estás? , ¿Donde está la biblioteca?])
+``````
+
+
+## Error handling
 Error handling in this package is all done using the result class pattern. There are no exceptions unless something goes wrong with HTTP (e.g. you have no connection). Specifically, it uses the result class from the elegant package.
 
 Like so:

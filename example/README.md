@@ -27,3 +27,12 @@ wiedervereinigung: de (1.0)
 zmaj: hr (1.0)
 chuột túi: vi (1.0)
 ```
+
+## Break Sentence
+`dart example/break.dart 'How are you? I am fine. What did you do today?' '¿hola, cómo estás? ¿Donde está la biblioteca?'`
+=>
+```
+alex~$ dart example/break.dart 'How are you? I am fine. What did you do today?' '¿hola, cómo estás? ¿Donde está la biblioteca?'
+How are you? I am fine. What did you do today?: [How are you? , I am fine. , What did you do today?]
+¿hola, cómo estás? ¿Donde está la biblioteca?: [¿hola, cómo estás? , ¿Donde está la biblioteca?]
+```

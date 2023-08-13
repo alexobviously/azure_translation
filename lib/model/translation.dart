@@ -1,3 +1,5 @@
+import 'package:azure_translation/azure_translation.dart';
+
 /// The result of a translation request.
 class TranslationResult {
   /// The original text in the base language
@@ -48,18 +50,4 @@ class Translation {
 
   @override
   String toString() => '$to: $text';
-}
-
-/// A detected language result that will be returned in cases where `translate`
-/// is called without explicitly specifying the base language.
-class DetectedLanguage {
-  final String language;
-  final num score;
-  const DetectedLanguage({required this.language, required this.score});
-
-  factory DetectedLanguage.fromJson(Map<String, dynamic> json) =>
-      DetectedLanguage(
-        language: json['language'],
-        score: json['score'],
-      );
 }
