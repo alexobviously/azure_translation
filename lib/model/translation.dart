@@ -1,17 +1,25 @@
+/// The result of a translation request.
 class TranslationResult {
-  final String original;
+  /// The original text in the base language
+  /// that was used to generate the request.
+  final String text;
+
+  /// One `Translation` for each language that was requested.
   final List<Translation> translations;
+
+  /// The detected language of the original text, for cases where it wasn't
+  /// explicitly specified.
   final DetectedLanguage? detectedLanguage;
 
   const TranslationResult({
-    required this.original,
+    required this.text,
     required this.translations,
     this.detectedLanguage,
   });
 
   factory TranslationResult.fromJson(Map<String, dynamic> json) =>
       TranslationResult(
-        original: json['original'],
+        text: json['text'],
         translations: List<Translation>.from(
             json['translations'].map((x) => Translation.fromJson(x))),
         detectedLanguage: json.containsKey('detectedLanguage')
@@ -25,7 +33,7 @@ class TranslationResult {
       translations.where((e) => e.to == to).firstOrNull?.text;
 
   @override
-  String toString() => 'TranslationResult($original, $translations)';
+  String toString() => 'TranslationResult($text, $translations)';
 }
 
 class Translation {
@@ -42,6 +50,8 @@ class Translation {
   String toString() => '$to: $text';
 }
 
+/// A detected language result that will be returned in cases where `translate`
+/// is called without explicitly specifying the base language.
 class DetectedLanguage {
   final String language;
   final num score;

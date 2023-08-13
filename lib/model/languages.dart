@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+/// Possible scopes for the language list request.
 enum LanguageScope {
   translation,
   transliteration,
   dictionary;
 }
 
+/// The direction that a script is written in, either ltr (left-to-right) or
+/// rtl (right-to-left).
 enum ScriptDirection {
   ltr,
   rtl;

@@ -1,13 +1,12 @@
 name: azure_translation
-description: A wrapper for interacting with Azure's translation API.
-version: 0.1.0
+description: A Dart wrapper for interacting with Azure's translation API.
+version: 0.1.1
 repository: https://github.com/alexobviously/azure_translation
 issue_tracker: https://github.com/alexobviously/azure_translation/issues
 
 environment:
   sdk: ^3.0.6
 
-# Add regular dependencies here.
 dependencies:
   elegant: ^0.0.2
   http: ^1.1.0
