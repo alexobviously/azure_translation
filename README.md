@@ -3,12 +3,10 @@
 Currently supports:
 * Listing languages
 * Translation
+* Language detection
 
 Coming soon:
 * Transliteration
-* Language detection
-
-
 
 ### Listing Languages
 [Azure Reference](https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-languages)  
@@ -54,6 +52,22 @@ final res = await at.translate(
 print(res.object!.join('\n'));
 // TranslationResult(hello world, [fr: Salut tout le monde, vi: Chào thế giới, ar: مرحبا بالعالم])
 // TranslationResult(good morning, [fr: Bonjour, vi: Xin chào, ar: صباح الخير])
+```
+
+### Language Detection
+Docs coming soon but this is self explanatory for now:
+```dart
+final res = await detect(
+    ['bonjour', 'hola', 'здравейте'],
+    key: key,
+    region: region,
+);
+print(res.object!.join('\n'));
+// DetectionResult(bonjour, fr, 1.0, true, false)
+// DetectionResult(hola, es, 1.0, true, false)
+// DetectionResult(здравейте, bg, 1.0, true, true)
+print(res.object!.first.scores);
+// {fr: 1.0}
 ```
 
 ### Error handling
