@@ -38,6 +38,7 @@ class TranslationResult {
   String toString() => 'TranslationResult($text, $translations)';
 }
 
+/// A single translation containing source and translated text.
 class Translation {
   final String text;
   final String to;

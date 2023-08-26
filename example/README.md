@@ -17,6 +17,23 @@ bonjour: [vi: Xin chào, zh-Hans: 你好, ru: Привет]
 
 You can change the target languages in the script.
 
+## Transliterate
+
+`dart example/transliterate.dart ja Latn Jpan konnichiwa arigato sayounara`
+=>
+```
+konnichiwa: こんにちわ
+arigato: ありがと
+sayounara: さようなら
+```
+
+`dart example/transliterate.dart sr-Cyrl Cyrl Latn здраво транслитерација`
+=>
+```
+здраво: zdravo
+транслитерација: transliteracija
+```
+
 ## Detect
 
 `dart example/detect.dart unambiguous wiedervereinigung zmaj 'chuột túi'`
@@ -32,7 +49,6 @@ chuột túi: vi (1.0)
 `dart example/break.dart 'How are you? I am fine. What did you do today?' '¿hola, cómo estás? ¿Donde está la biblioteca?'`
 =>
 ```
-alex~$ dart example/break.dart 'How are you? I am fine. What did you do today?' '¿hola, cómo estás? ¿Donde está la biblioteca?'
 How are you? I am fine. What did you do today?: [How are you? , I am fine. , What did you do today?]
 ¿hola, cómo estás? ¿Donde está la biblioteca?: [¿hola, cómo estás? , ¿Donde está la biblioteca?]
 ```

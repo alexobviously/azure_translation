@@ -41,7 +41,6 @@ print(langs.translationLanguage('en'));
 ## Translation
 [Azure Reference](https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-translate)  
 
-Docs coming soon but this is self explanatory for now:
 ```dart
 import 'package:azure_translation/azure_translation.dart' as at;
 
@@ -57,10 +56,25 @@ print(res.object!.join('\n'));
 // TranslationResult(good morning, [fr: Bonjour, vi: Xin chào, ar: صباح الخير])
 ```
 
+## Transliteration
+[Azure Reference](https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-transliterate)
+
+```dart
+final res = await transliterate(
+    ['konnichiwa', 'arigato', 'sayounara'],
+    key: key,
+    region: region,
+    language: 'ja',
+    fromScript: 'Latn',
+    toScript: 'Jpan',
+  );
+print(res.object!);
+// TransliterationResult(ja, Latn -> Jpan, {konnichiwa: こんにちわ, arigato: ありがと, sayounara: さようなら})TransliterationResult(ja, Latn -> Jpan, {konnichiwa: こんにちわ, arigato: ありがと, sayounara: さようなら})
+```
+
 ## Language Detection
 [Azure Reference](https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-detect)  
 
-Docs coming soon but this is self explanatory for now:
 ```dart
 final res = await detect(
     ['bonjour', 'hola', 'здравейте'],
@@ -78,7 +92,6 @@ print(res.object!.first.scores);
 ## Breaking Sentences
 [Azure Reference](https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-break-sentence)  
 
-Docs coming soon but this is self explanatory for now:
 ```dart
 final res = await breakSentence(
     [

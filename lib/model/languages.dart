@@ -3,7 +3,10 @@ import 'dart:convert';
 /// A detected language result that will be returned in cases where `translate`
 /// is called without explicitly specifying the base language.
 class DetectedLanguage {
+  /// The code of the detected language.
   final String language;
+
+  /// A confidence score between 0 and 1.
   final num score;
   const DetectedLanguage({required this.language, required this.score});
 
@@ -167,6 +170,10 @@ class TranslitLanguage extends LanguageBase {
             .map((e) => ScriptLanguage.fromJson(e))
             .toList(),
       );
+
+  Map<String, List<String>> get map => {
+        for (final s in scripts) s.code: s.toScripts.map((e) => e.code).toList()
+      };
 
   @override
   String toString() => 'TranslitLanguage($code, $name, $nativeName, '
