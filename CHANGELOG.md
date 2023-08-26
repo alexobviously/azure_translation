@@ -1,3 +1,8 @@
+### 1.0.0
+- Stable release!
+- Transliteration.
+- More docs.
+
 ### 0.1.2
 - Breaking sentences.
 
