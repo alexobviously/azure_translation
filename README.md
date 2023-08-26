@@ -3,11 +3,9 @@
 Currently supports:
 * Listing languages
 * Translation
+* Transliteration
 * Language detection
 * Breaking sentences
-
-Coming soon:
-* Transliteration
 
 ## Listing Languages
 [Azure Reference](https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-languages)  
