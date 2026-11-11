@@ -1,5 +1,3 @@
-library azure_translation;
-
 export 'functions/break.dart';
 export 'functions/detect.dart';
 export 'functions/languages.dart';

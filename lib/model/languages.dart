@@ -23,7 +23,8 @@ enum ScriptDirection {
   ltr,
   rtl;
 
-  static fromString(String str) => values.firstWhere((e) => e.name == str);
+  static ScriptDirection fromString(String str) =>
+      values.firstWhere((e) => e.name == str);
 }
 
 class LanguageList {

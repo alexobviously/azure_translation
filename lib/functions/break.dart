@@ -17,8 +17,8 @@ Future<Result<List<BrokenSentence>, AzureTranslationError>> breakSentence(
 
   final queryParams = {
     'api-version': AzureTranslation.apiVersion,
-    if (language != null) 'language': language,
-    if (script != null) 'script': script,
+    'language': ?language,
+    'script': ?script,
   };
   final paramString = queryParams.entries
       .map((e) => '${e.key}=${e.value}')
