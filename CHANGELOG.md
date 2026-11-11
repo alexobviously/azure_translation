@@ -1,9 +1,11 @@
 ### 2.0.0
-- Bump Dart SDK to 3.13.0.
-- Bump dependency versions.
+- **Breaking:** Require Dart SDK 3.13.0 or later.
+- **Breaking:** Upgrade `elegant` from 0.0.2 to 2.0.2.
+- **Breaking:** Correct `DetectionResult.alternatives` to
+  `List<DetectionAlternative>?`.
+- Update other dependency versions.
 - Add offline tests for requests, responses, and error handling.
 - Add CI checks for formatting, analysis, and tests.
-- Fix parsing of alternative language detections.
 - Allow injecting a HTTP client into every API function.
 - Encode query parameters safely and decode JSON responses as UTF-8.
 - Adopt stricter modern analysis and formatting rules.

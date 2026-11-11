@@ -49,7 +49,7 @@ final res = await at.translate(
     key: 'YOUR_AZURE_KEY',
     region: 'YOUR_AZURE_REGION',
 );
-print(res.object!.join('\n'));
+print(res.unwrap().join('\n'));
 // TranslationResult(hello world, [fr: Salut tout le monde, vi: Chào thế giới, ar: مرحبا بالعالم])
 // TranslationResult(good morning, [fr: Bonjour, vi: Xin chào, ar: صباح الخير])
 ```
@@ -66,7 +66,7 @@ final res = await transliterate(
     fromScript: 'Latn',
     toScript: 'Jpan',
   );
-print(res.object!);
+print(res.unwrap());
 // TransliterationResult(ja, Latn -> Jpan, {konnichiwa: こんにちわ, arigato: ありがと, sayounara: さようなら})
 ```
 
@@ -79,11 +79,12 @@ final res = await detect(
     key: key,
     region: region,
 );
-print(res.object!.join('\n'));
+final detections = res.unwrap();
+print(detections.join('\n'));
 // DetectionResult(bonjour, fr, 1.0, true, false)
 // DetectionResult(hola, es, 1.0, true, false)
 // DetectionResult(здравейте, bg, 1.0, true, true)
-print(res.object!.first.scores);
+print(detections.first.scores);
 // {fr: 1.0}
 ```
 
@@ -99,24 +100,22 @@ final res = await breakSentence(
     key: key,
     region: region,
 );
-print(res.object!.join('\n'));
+print(res.unwrap().join('\n'));
 // BrokenSentence([How are you? , I am fine. , What did you do today?])
 // BrokenSentence([¿hola, cómo estás? , ¿Donde está la biblioteca?])
 ```
 
 
 ## Error handling
-Error handling in this package is all done using the result class pattern. There are no exceptions unless something goes wrong with HTTP (e.g. you have no connection). Specifically, it uses the result class from the elegant package.
+Non-successful Azure responses are returned using the result pattern from the
+`elegant` package. Transport failures, malformed responses, and calling
+`unwrap()` on an error result can still throw.
 
 Like so:
 ```dart
-final langs = await languages();
-final Result<LanguageList, AzureTranslationError> res = await languages();
-if (res.ok) {
-    final LanguageList languageList = res.object!;
-    print('Success! Language list: $languageList');
-} else {
-    final AzureTranslationError error = res.error!;
-    print('Error! $error');
-}
+final result = await languages();
+result.fold(
+  onOk: (languages) => print('Success! Language list: $languages'),
+  onError: (error) => print('Error! $error'),
+);
 ```
