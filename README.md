@@ -25,7 +25,7 @@ print(langs.translation?.take(4).join('\n'));
 The language list contains lists of `translation`, `transliteration` and `dictionary` languages.
 It is possible to only request one or two of these scopes by passing the optional `scopes` parameter:
 ```dart
-listLanguages(scopes: [LanguageScope.translation]);
+at.languages(scopes: const [.translation]);
 ```
 
 There is also an optional `baseLanguage` parameter, which sets the `Accept-Language` header.
@@ -67,7 +67,7 @@ final res = await transliterate(
     toScript: 'Jpan',
   );
 print(res.object!);
-// TransliterationResult(ja, Latn -> Jpan, {konnichiwa: こんにちわ, arigato: ありがと, sayounara: さようなら})TransliterationResult(ja, Latn -> Jpan, {konnichiwa: こんにちわ, arigato: ありがと, sayounara: さようなら})
+// TransliterationResult(ja, Latn -> Jpan, {konnichiwa: こんにちわ, arigato: ありがと, sayounara: さようなら})
 ```
 
 ## Language Detection
@@ -102,7 +102,7 @@ final res = await breakSentence(
 print(res.object!.join('\n'));
 // BrokenSentence([How are you? , I am fine. , What did you do today?])
 // BrokenSentence([¿hola, cómo estás? , ¿Donde está la biblioteca?])
-``````
+```
 
 
 ## Error handling
