@@ -21,7 +21,9 @@ void main(List<String> args) async {
     return;
   }
 
-  print(res.object!.transliterations
-      .map((e) => '${e.sourceText}: ${e.text}')
-      .join('\n'));
+  print(
+    res.object!.transliterations
+        .map((e) => '${e.sourceText}: ${e.text}')
+        .join('\n'),
+  );
 }

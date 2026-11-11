@@ -23,7 +23,8 @@ class TranslationResult {
       TranslationResult(
         text: json['text'],
         translations: List<Translation>.from(
-            json['translations'].map((x) => Translation.fromJson(x))),
+          json['translations'].map((x) => Translation.fromJson(x)),
+        ),
         detectedLanguage: json.containsKey('detectedLanguage')
             ? DetectedLanguage.fromJson(json['detectedLanguage'])
             : null,
@@ -44,10 +45,8 @@ class Translation {
   final String to;
   const Translation({required this.text, required this.to});
 
-  factory Translation.fromJson(Map<String, dynamic> json) => Translation(
-        text: json['text'],
-        to: json['to'],
-      );
+  factory Translation.fromJson(Map<String, dynamic> json) =>
+      Translation(text: json['text'], to: json['to']);
 
   @override
   String toString() => '$to: $text';

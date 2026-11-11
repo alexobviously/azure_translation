@@ -23,9 +23,7 @@ Future<Result<LanguageList, AzureTranslationError>> languages({
   final paramString = queryParams.map((e) => '${e.$1}=${e.$2}').join('&');
   final uri = Uri.parse('$endpoint?$paramString');
 
-  final headers = {
-    if (baseLanguage != null) 'Accept-Language': baseLanguage,
-  };
+  final headers = {if (baseLanguage != null) 'Accept-Language': baseLanguage};
 
   final res = await http.get(uri, headers: headers);
 

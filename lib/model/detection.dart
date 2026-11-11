@@ -24,7 +24,7 @@ class DetectionResult extends DetectionResultBase {
   /// The original text that was used to generate the request.
   final String text;
 
-  final List<DetectionResult>? alternatives;
+  final List<DetectionAlternative>? alternatives;
 
   const DetectionResult({
     required this.text,
@@ -43,20 +43,26 @@ class DetectionResult extends DetectionResultBase {
         translationSupported: json['isTranslationSupported'],
         transliterationSupported: json['isTransliterationSupported'],
         alternatives: json.containsKey('alternatives')
-            ? List<DetectionResult>.from(
-                json['alternatives'].map(DetectionAlternative.fromJson))
+            ? (json['alternatives'] as List<dynamic>)
+                  .map(
+                    (alternative) => DetectionAlternative.fromJson(
+                      alternative as Map<String, dynamic>,
+                    ),
+                  )
+                  .toList()
             : null,
       );
 
   @override
-  String toString() => 'DetectionResult($text, $language, $score, '
+  String toString() =>
+      'DetectionResult($text, $language, $score, '
       '$translationSupported, $transliterationSupported)';
 
   /// Returns a map of all possible detected languages and their scores.
   Map<String, num> get scores => {
-        language: score,
-        for (final a in alternatives ?? []) a.language: a.score,
-      };
+    language: score,
+    for (final a in alternatives ?? []) a.language: a.score,
+  };
 }
 
 /// An alternative result of a detection request.
@@ -77,6 +83,7 @@ class DetectionAlternative extends DetectionResultBase {
       );
 
   @override
-  String toString() => 'DetectionAlternative($language, $score, '
+  String toString() =>
+      'DetectionAlternative($language, $score, '
       '$translationSupported, $transliterationSupported)';
 }

@@ -9,7 +9,8 @@ Future<Result<List<DetectionResult>, AzureTranslationError>> detect(
   required String key,
   required String region,
 }) async {
-  const endpoint = 'https://api.cognitive.microsofttranslator.com/'
+  const endpoint =
+      'https://api.cognitive.microsofttranslator.com/'
       'detect?api-version=${AzureTranslation.apiVersion}';
 
   final headers = {
@@ -31,12 +32,8 @@ Future<Result<List<DetectionResult>, AzureTranslationError>> detect(
   }
 
   return Result.ok(
-    (jsonDecode(res.body) as List)
-        .indexed
-        .map((e) => DetectionResult.fromJson({
-              ...e.$2,
-              'text': text[e.$1],
-            }))
+    (jsonDecode(res.body) as List).indexed
+        .map((e) => DetectionResult.fromJson({...e.$2, 'text': text[e.$1]}))
         .toList(),
   );
 }

@@ -33,11 +33,7 @@ Future<Result<List<TranslationResult>, AzureTranslationError>> translate(
 
   final texts = text.map((e) => {'text': e}).toList();
 
-  final res = await http.post(
-    uri,
-    headers: headers,
-    body: jsonEncode(texts),
-  );
+  final res = await http.post(uri, headers: headers, body: jsonEncode(texts));
 
   if (res.statusCode != 200) {
     return Result.error(AzureTranslationError.fromResponse(res));
@@ -46,11 +42,8 @@ Future<Result<List<TranslationResult>, AzureTranslationError>> translate(
   return Result.ok(
     List<TranslationResult>.from(
       (jsonDecode(res.body) as List).indexed.map(
-            (e) => TranslationResult.fromJson({
-              ...e.$2,
-              'text': text[e.$1],
-            }),
-          ),
+        (e) => TranslationResult.fromJson({...e.$2, 'text': text[e.$1]}),
+      ),
     ),
   );
 }

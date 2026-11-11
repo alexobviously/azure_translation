@@ -6,13 +6,14 @@ void main(List<String> args) async {
   bool dictionary = args.contains('dictionary') || args.contains('d');
 
   final res = await languages(
-      scopes: args.isEmpty
-          ? null
-          : [
-              if (translation) LanguageScope.translation,
-              if (transliteration) LanguageScope.transliteration,
-              if (dictionary) LanguageScope.dictionary,
-            ]);
+    scopes: args.isEmpty
+        ? null
+        : [
+            if (translation) .translation,
+            if (transliteration) .transliteration,
+            if (dictionary) .dictionary,
+          ],
+  );
   if (!res.ok) {
     print('Error: ${res.error}');
     return;

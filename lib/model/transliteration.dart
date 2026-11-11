@@ -19,8 +19,9 @@ class TransliterationResult {
     required this.transliterations,
   });
 
-  Map<String, String> get map =>
-      {for (final t in transliterations) t.sourceText: t.text};
+  Map<String, String> get map => {
+    for (final t in transliterations) t.sourceText: t.text,
+  };
 
   @override
   String toString() =>

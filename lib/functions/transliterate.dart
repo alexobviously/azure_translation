@@ -25,8 +25,9 @@ Future<Result<TransliterationResult, AzureTranslationError>> transliterate(
     'toScript': toScript,
   };
 
-  final paramString =
-      queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
+  final paramString = queryParams.entries
+      .map((e) => '${e.key}=${e.value}')
+      .join('&');
   final uri = Uri.parse('$endpoint?$paramString');
 
   final headers = {
@@ -37,27 +38,22 @@ Future<Result<TransliterationResult, AzureTranslationError>> transliterate(
 
   final texts = text.map((e) => {'text': e}).toList();
 
-  final res = await http.post(
-    uri,
-    headers: headers,
-    body: jsonEncode(texts),
-  );
+  final res = await http.post(uri, headers: headers, body: jsonEncode(texts));
 
   if (res.statusCode != 200) {
     return Result.error(AzureTranslationError.fromResponse(res));
   }
 
-  return Result.ok(TransliterationResult(
-    language: language,
-    fromScript: fromScript,
-    toScript: toScript,
-    transliterations: [
-      ...(jsonDecode(res.body) as List).indexed.map(
-            (e) => Transliteration.fromJson({
-              ...e.$2,
-              'sourceText': text[e.$1],
-            }),
-          ),
-    ],
-  ));
+  return Result.ok(
+    TransliterationResult(
+      language: language,
+      fromScript: fromScript,
+      toScript: toScript,
+      transliterations: [
+        ...(jsonDecode(res.body) as List).indexed.map(
+          (e) => Transliteration.fromJson({...e.$2, 'sourceText': text[e.$1]}),
+        ),
+      ],
+    ),
+  );
 }
