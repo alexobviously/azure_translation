@@ -1,4 +1,7 @@
+// ignore_for_file: avoid_print
+
 import 'package:azure_translation/azure_translation.dart';
+import 'package:elegant/elegant.dart';
 
 import 'translate.dart';
 
@@ -16,14 +19,16 @@ void main(List<String> args) async {
     toScript: args[2],
   );
 
-  if (!res.ok) {
-    print('Error: ${res.error}');
-    return;
+  switch (res) {
+    case Ok(:final value):
+      print(
+        value.transliterations
+            .map((transliteration) {
+              return '${transliteration.sourceText}: ${transliteration.text}';
+            })
+            .join('\n'),
+      );
+    case Err(:final error):
+      print('Error: $error');
   }
-
-  print(
-    res.object!.transliterations
-        .map((e) => '${e.sourceText}: ${e.text}')
-        .join('\n'),
-  );
 }

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
+import 'package:azure_translation/azure_translation.dart';
 import 'package:elegant/elegant.dart';
 import 'package:http/http.dart' as http;
-import 'package:azure_translation/azure_translation.dart';
 
 Future<Result<List<BrokenSentence>, AzureTranslationError>> breakSentence(
   List<String> text, {

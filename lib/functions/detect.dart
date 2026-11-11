@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
-import 'package:elegant/elegant.dart';
 import 'package:azure_translation/azure_translation.dart';
+import 'package:elegant/elegant.dart';
+import 'package:http/http.dart' as http;
 
 Future<Result<List<DetectionResult>, AzureTranslationError>> detect(
   List<String> text, {

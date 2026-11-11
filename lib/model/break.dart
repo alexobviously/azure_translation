@@ -26,7 +26,7 @@ class BrokenSentence {
 
   factory BrokenSentence.fromJson(Map<String, dynamic> json) {
     final sentLen = (json['sentLen'] as List).cast<int>();
-    List<String> segments = [];
+    final segments = <String>[];
     int start = 0;
     for (final len in sentLen) {
       segments.add(json['text'].substring(start, start + len));
