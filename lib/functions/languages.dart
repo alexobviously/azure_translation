@@ -31,9 +31,9 @@ Future<Result<LanguageList, AzureTranslationError>> languages({
   final res = await get(uri, headers: headers);
 
   if (res.statusCode != 200) {
-    return Result.error(AzureTranslationError.fromResponse(res));
+    return .error(AzureTranslationError.fromResponse(res));
   }
 
   final json = jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
-  return Result.ok(LanguageList.fromJson(json));
+  return .ok(LanguageList.fromJson(json));
 }

@@ -1,34 +1,37 @@
 import 'package:azure_translation/azure_translation.dart';
 
 /// The result of a translation request.
-class TranslationResult {
+class const TranslationResult({
   /// The original text in the base language
   /// that was used to generate the request.
-  final String text;
+  required final String text,
 
   /// One `Translation` for each language that was requested.
-  final List<Translation> translations;
+  required final List<Translation> translations,
 
   /// The detected language of the original text, for cases where it wasn't
   /// explicitly specified.
-  final DetectedLanguage? detectedLanguage;
-
-  const TranslationResult({
-    required this.text,
-    required this.translations,
-    this.detectedLanguage,
-  });
-
-  factory TranslationResult.fromJson(Map<String, dynamic> json) =>
-      TranslationResult(
-        text: json['text'],
-        translations: List<Translation>.from(
-          json['translations'].map((x) => Translation.fromJson(x)),
-        ),
-        detectedLanguage: json.containsKey('detectedLanguage')
-            ? DetectedLanguage.fromJson(json['detectedLanguage'])
-            : null,
-      );
+  final DetectedLanguage? detectedLanguage,
+}) {
+  factory fromJson(Map<String, dynamic> json) => .new(
+    text: json['text'],
+    translations: (json['translations'] as List<dynamic>)
+        .map(
+          (translation) => Translation.fromJson(
+            translation as Map<String, dynamic>,
+          ),
+        )
+        .toList(),
+    detectedLanguage: switch (json['detectedLanguage']) {
+      final Map<String, dynamic> detectedLanguage => DetectedLanguage.fromJson(
+        detectedLanguage,
+      ),
+      null => null,
+      final invalid => throw FormatException(
+        'Invalid detected language: $invalid',
+      ),
+    },
+  );
 
   Map<String, String> get map => {for (final t in translations) t.to: t.text};
 
@@ -40,13 +43,12 @@ class TranslationResult {
 }
 
 /// A single translation containing source and translated text.
-class Translation {
-  final String text;
-  final String to;
-  const Translation({required this.text, required this.to});
-
-  factory Translation.fromJson(Map<String, dynamic> json) =>
-      Translation(text: json['text'], to: json['to']);
+class const Translation({
+  required final String text,
+  required final String to,
+}) {
+  factory fromJson(Map<String, dynamic> json) =>
+      .new(text: json['text'], to: json['to']);
 
   @override
   String toString() => '$to: $text';

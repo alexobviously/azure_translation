@@ -15,13 +15,53 @@ void main() {
         expect(request.method, 'GET');
         expect(request.url.path, '/languages');
         expect(request.url.queryParameters['api-version'], '3.0');
-        expect(request.url.queryParameters['scope'], 'translation,dictionary');
+        expect(
+          request.url.queryParameters['scope'],
+          'translation,transliteration,dictionary',
+        );
         expect(request.headers['Accept-Language'], 'fr');
 
         return http.Response(
           jsonEncode({
             'translation': {
               'fr': {'name': 'French', 'nativeName': 'Français', 'dir': 'ltr'},
+            },
+            'transliteration': {
+              'ja': {
+                'name': 'Japanese',
+                'nativeName': '日本語',
+                'scripts': [
+                  {
+                    'code': 'Jpan',
+                    'name': 'Japanese',
+                    'nativeName': '日本語',
+                    'dir': 'ltr',
+                    'toScripts': [
+                      {
+                        'code': 'Latn',
+                        'name': 'Latin',
+                        'nativeName': 'Latin',
+                        'dir': 'ltr',
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+            'dictionary': {
+              'en': {
+                'name': 'English',
+                'nativeName': 'English',
+                'dir': 'ltr',
+                'translations': [
+                  {
+                    'code': 'fr',
+                    'name': 'French',
+                    'nativeName': 'Français',
+                    'dir': 'ltr',
+                  },
+                ],
+              },
             },
           }),
           200,
@@ -30,15 +70,20 @@ void main() {
       });
       final result = await languages(
         baseLanguage: 'fr',
-        scopes: const [.translation, .dictionary],
+        scopes: const [.translation, .transliteration, .dictionary],
         client: client,
       );
 
       final languageList = result.unwrap();
       expect(languageList.translation, hasLength(1));
       expect(languageList.translationLanguage('fr')?.nativeName, 'Français');
-      expect(languageList.transliteration, isNull);
-      expect(languageList.dictionary, isNull);
+      expect(languageList.transliterationLanguage('ja')?.map, {
+        'Jpan': ['Latn'],
+      });
+      expect(
+        languageList.dictionaryLanguage('en')?.translations.single.code,
+        'fr',
+      );
     });
   });
 

@@ -1,15 +1,14 @@
 /// A detected language result that will be returned in cases where `translate`
 /// is called without explicitly specifying the base language.
-class DetectedLanguage {
+class const DetectedLanguage({
   /// The code of the detected language.
-  final String language;
+  required final String language,
 
   /// A confidence score between 0 and 1.
-  final num score;
-  const DetectedLanguage({required this.language, required this.score});
-
-  factory DetectedLanguage.fromJson(Map<String, dynamic> json) =>
-      DetectedLanguage(language: json['language'], score: json['score']);
+  required final num score,
+}) {
+  factory fromJson(Map<String, dynamic> json) =>
+      .new(language: json['language'], score: json['score']);
 }
 
 /// Possible scopes for the language list request.
@@ -21,48 +20,28 @@ enum ScriptDirection {
   ltr,
   rtl;
 
-  static ScriptDirection fromString(String str) =>
-      values.firstWhere((e) => e.name == str);
+  static ScriptDirection fromString(String value) => switch (value) {
+    'ltr' => .ltr,
+    'rtl' => .rtl,
+    _ => throw FormatException('Invalid script direction: $value'),
+  };
 }
 
-class LanguageList {
-  final List<Language>? translation;
-  final List<TranslitLanguage>? transliteration;
-  final List<DictionaryLanguage>? dictionary;
-
-  const LanguageList({this.translation, this.transliteration, this.dictionary});
-
-  factory LanguageList.fromJson(Map<String, dynamic> json) => LanguageList(
-    translation: json.containsKey('translation')
-        ? (json['translation'] as Map<String, dynamic>).entries
-              .map(
-                (e) => Language.fromJson({
-                  'code': e.key,
-                  ...(e.value as Map<String, dynamic>),
-                }),
-              )
-              .toList()
-        : null,
-    transliteration: json.containsKey('transliteration')
-        ? (json['transliteration'] as Map<String, dynamic>).entries
-              .map(
-                (e) => TranslitLanguage.fromJson({
-                  'code': e.key,
-                  ...(e.value as Map<String, dynamic>),
-                }),
-              )
-              .toList()
-        : null,
-    dictionary: json.containsKey('dictionary')
-        ? (json['dictionary'] as Map<String, dynamic>).entries
-              .map(
-                (e) => DictionaryLanguage.fromJson({
-                  'code': e.key,
-                  ...(e.value as Map<String, dynamic>),
-                }),
-              )
-              .toList()
-        : null,
+class const LanguageList({
+  final List<Language>? translation,
+  final List<TranslitLanguage>? transliteration,
+  final List<DictionaryLanguage>? dictionary,
+}) {
+  factory fromJson(Map<String, dynamic> json) => .new(
+    translation: _parseLanguageMap(json['translation'], Language.fromJson),
+    transliteration: _parseLanguageMap(
+      json['transliteration'],
+      TranslitLanguage.fromJson,
+    ),
+    dictionary: _parseLanguageMap(
+      json['dictionary'],
+      DictionaryLanguage.fromJson,
+    ),
   );
 
   Language? translationLanguage(String code) =>
@@ -81,33 +60,35 @@ class LanguageList {
       'dictionary: ${dictionary?.length ?? 0})';
 }
 
-abstract class LanguageBase {
-  final String code;
-  final String name;
-  final String nativeName;
+List<T>? _parseLanguageMap<T>(
+  Object? value,
+  T Function(Map<String, dynamic>) fromJson,
+) => switch (value) {
+  final Map<String, dynamic> languages => [
+    for (final MapEntry(:key, :value) in languages.entries)
+      fromJson({'code': key, ...value as Map<String, dynamic>}),
+  ],
+  null => null,
+  final invalid => throw FormatException('Invalid language map: $invalid'),
+};
 
-  const LanguageBase({
-    required this.code,
-    required this.name,
-    required this.nativeName,
-  });
-}
+abstract class const LanguageBase({
+  required final String code,
+  required final String name,
+  required final String nativeName,
+});
 
-class Language extends LanguageBase {
-  final ScriptDirection scriptDirection;
-
-  const Language({
-    required super.code,
-    required super.name,
-    required super.nativeName,
-    required this.scriptDirection,
-  });
-
-  factory Language.fromJson(Map<String, dynamic> json) => Language(
+class const Language({
+  required super.code,
+  required super.name,
+  required super.nativeName,
+  required final ScriptDirection scriptDirection,
+}) extends LanguageBase {
+  factory fromJson(Map<String, dynamic> json) => .new(
     code: json['code'],
     name: json['name'],
     nativeName: json['nativeName'],
-    scriptDirection: ScriptDirection.fromString(json['dir']),
+    scriptDirection: .fromString(json['dir']),
   );
 
   @override
@@ -115,27 +96,26 @@ class Language extends LanguageBase {
       'Language($code, $name, $nativeName, ${scriptDirection.name})';
 }
 
-class DictionaryLanguage extends Language {
-  final List<Language> translations;
-
-  const DictionaryLanguage({
-    required super.code,
-    required super.name,
-    required super.nativeName,
-    required super.scriptDirection,
-    required this.translations,
-  });
-
-  factory DictionaryLanguage.fromJson(Map<String, dynamic> json) =>
-      DictionaryLanguage(
-        code: json['code'],
-        name: json['name'],
-        nativeName: json['nativeName'],
-        scriptDirection: ScriptDirection.fromString(json['dir']),
-        translations: (json['translations'] as List<dynamic>)
-            .map((e) => Language.fromJson(e))
-            .toList(),
-      );
+class const DictionaryLanguage({
+  required super.code,
+  required super.name,
+  required super.nativeName,
+  required super.scriptDirection,
+  required final List<Language> translations,
+}) extends Language {
+  factory fromJson(Map<String, dynamic> json) => .new(
+    code: json['code'],
+    name: json['name'],
+    nativeName: json['nativeName'],
+    scriptDirection: .fromString(json['dir']),
+    translations: (json['translations'] as List<dynamic>)
+        .map(
+          (translation) => Language.fromJson(
+            translation as Map<String, dynamic>,
+          ),
+        )
+        .toList(),
+  );
 
   @override
   String toString() =>
@@ -143,25 +123,22 @@ class DictionaryLanguage extends Language {
       '${translations.length} translations)';
 }
 
-class TranslitLanguage extends LanguageBase {
-  final List<ScriptLanguage> scripts;
-
-  const TranslitLanguage({
-    required super.code,
-    required super.name,
-    required super.nativeName,
-    required this.scripts,
-  });
-
-  factory TranslitLanguage.fromJson(Map<String, dynamic> json) =>
-      TranslitLanguage(
-        code: json['code'],
-        name: json['name'],
-        nativeName: json['nativeName'],
-        scripts: (json['scripts'] as List<dynamic>)
-            .map((e) => ScriptLanguage.fromJson(e))
-            .toList(),
-      );
+class const TranslitLanguage({
+  required super.code,
+  required super.name,
+  required super.nativeName,
+  required final List<ScriptLanguage> scripts,
+}) extends LanguageBase {
+  factory fromJson(Map<String, dynamic> json) => .new(
+    code: json['code'],
+    name: json['name'],
+    nativeName: json['nativeName'],
+    scripts: (json['scripts'] as List<dynamic>)
+        .map(
+          (script) => ScriptLanguage.fromJson(script as Map<String, dynamic>),
+        )
+        .toList(),
+  );
 
   Map<String, List<String>> get map => {
     for (final s in scripts) s.code: s.toScripts.map((e) => e.code).toList(),
@@ -173,24 +150,22 @@ class TranslitLanguage extends LanguageBase {
       'scripts: ${scripts.map((e) => e.code).toList()})';
 }
 
-class ScriptLanguage extends Language {
-  final List<Language> toScripts;
-
-  const ScriptLanguage({
-    required super.code,
-    required super.name,
-    required super.nativeName,
-    required super.scriptDirection,
-    required this.toScripts,
-  });
-
-  factory ScriptLanguage.fromJson(Map<String, dynamic> json) => ScriptLanguage(
+class const ScriptLanguage({
+  required super.code,
+  required super.name,
+  required super.nativeName,
+  required super.scriptDirection,
+  required final List<Language> toScripts,
+}) extends Language {
+  factory fromJson(Map<String, dynamic> json) => .new(
     code: json['code'],
     name: json['name'],
     nativeName: json['nativeName'],
-    scriptDirection: ScriptDirection.fromString(json['dir']),
+    scriptDirection: .fromString(json['dir']),
     toScripts: (json['toScripts'] as List<dynamic>)
-        .map((e) => Language.fromJson(e))
+        .map(
+          (script) => Language.fromJson(script as Map<String, dynamic>),
+        )
         .toList(),
   );
 }

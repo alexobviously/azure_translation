@@ -2,18 +2,12 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-class AzureTranslationError {
-  final int httpCode;
-  final int? code;
-  final String? message;
-
-  const AzureTranslationError({
-    required this.httpCode,
-    this.code,
-    this.message,
-  });
-
-  factory AzureTranslationError.fromResponse(http.Response response) {
+class const AzureTranslationError({
+  required final int httpCode,
+  final int? code,
+  final String? message,
+}) {
+  factory fromResponse(http.Response response) {
     int? code;
     String? message;
 
@@ -25,7 +19,7 @@ class AzureTranslationError {
       message = error['message'];
     } catch (_) {}
 
-    return AzureTranslationError(
+    return .new(
       httpCode: response.statusCode,
       code: code,
       message: message,

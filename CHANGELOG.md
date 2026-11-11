@@ -7,6 +7,7 @@
 - Allow injecting a HTTP client into every API function.
 - Encode query parameters safely and decode JSON responses as UTF-8.
 - Adopt stricter modern analysis and formatting rules.
+- Use primary constructors, switch expressions, and dot shorthands.
 
 ### 1.0.0
 - Stable release!
