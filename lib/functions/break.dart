@@ -10,6 +10,7 @@ Future<Result<List<BrokenSentence>, AzureTranslationError>> breakSentence(
   String? script,
   required String key,
   required String region,
+  http.Client? client,
 }) async {
   const endpoint =
       'https://api.cognitive.microsofttranslator.com/breaksentence';
@@ -31,7 +32,8 @@ Future<Result<List<BrokenSentence>, AzureTranslationError>> breakSentence(
 
   final texts = text.map((e) => {'text': e}).toList();
 
-  final res = await http.post(
+  final post = client?.post ?? http.post;
+  final res = await post(
     Uri.parse('$endpoint?$paramString'),
     headers: headers,
     body: jsonEncode(texts),

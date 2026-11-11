@@ -11,34 +11,26 @@ void main() {
 
   group('languages', () {
     test('sends the requested scopes and parses the response', () async {
-      final result = await http.runWithClient(
-        () => languages(
-          baseLanguage: 'fr',
-          scopes: const [.translation, .dictionary],
-        ),
-        () => MockClient((request) async {
-          expect(request.method, 'GET');
-          expect(request.url.path, '/languages');
-          expect(request.url.queryParameters['api-version'], '3.0');
-          expect(
-            request.url.queryParameters['scope'],
-            'translation,dictionary',
-          );
-          expect(request.headers['Accept-Language'], 'fr');
+      final client = MockClient((request) async {
+        expect(request.method, 'GET');
+        expect(request.url.path, '/languages');
+        expect(request.url.queryParameters['api-version'], '3.0');
+        expect(request.url.queryParameters['scope'], 'translation,dictionary');
+        expect(request.headers['Accept-Language'], 'fr');
 
-          return http.Response(
-            jsonEncode({
-              'translation': {
-                'en': {
-                  'name': 'English',
-                  'nativeName': 'English',
-                  'dir': 'ltr',
-                },
-              },
-            }),
-            200,
-          );
-        }),
+        return http.Response(
+          jsonEncode({
+            'translation': {
+              'en': {'name': 'English', 'nativeName': 'English', 'dir': 'ltr'},
+            },
+          }),
+          200,
+        );
+      });
+      final result = await languages(
+        baseLanguage: 'fr',
+        scopes: const [.translation, .dictionary],
+        client: client,
       );
 
       final languageList = result.unwrap();
@@ -51,46 +43,45 @@ void main() {
 
   group('translate', () {
     test('sends text and maps translations back to their source', () async {
-      final result = await http.runWithClient(
-        () => translate(
-          const ['hello', 'good morning'],
-          key: key,
-          region: region,
-          baseLanguage: 'en',
-          languages: const ['fr', 'vi'],
-        ),
-        () => MockClient((request) async {
-          expect(request.method, 'POST');
-          expect(request.url.path, '/translate');
-          expect(request.url.queryParameters['api-version'], '3.0');
-          expect(request.url.queryParameters['from'], 'en');
-          expect(request.url.queryParametersAll['to'], ['fr', 'vi']);
-          expect(request.headers['Ocp-Apim-Subscription-Key'], key);
-          expect(request.headers['Ocp-Apim-Subscription-Region'], region);
-          expect(jsonDecode(request.body), [
-            {'text': 'hello'},
-            {'text': 'good morning'},
-          ]);
+      final client = MockClient((request) async {
+        expect(request.method, 'POST');
+        expect(request.url.path, '/translate');
+        expect(request.url.queryParameters['api-version'], '3.0');
+        expect(request.url.queryParameters['from'], 'en');
+        expect(request.url.queryParametersAll['to'], ['fr', 'vi']);
+        expect(request.headers['Ocp-Apim-Subscription-Key'], key);
+        expect(request.headers['Ocp-Apim-Subscription-Region'], region);
+        expect(jsonDecode(request.body), [
+          {'text': 'hello'},
+          {'text': 'good morning'},
+        ]);
 
-          return http.Response(
-            jsonEncode([
-              {
-                'translations': [
-                  {'text': 'bonjour', 'to': 'fr'},
-                  {'text': 'xin chào', 'to': 'vi'},
-                ],
-              },
-              {
-                'translations': [
-                  {'text': 'bonjour', 'to': 'fr'},
-                  {'text': 'chào buổi sáng', 'to': 'vi'},
-                ],
-              },
-            ]),
-            200,
-            headers: {'content-type': 'application/json; charset=utf-8'},
-          );
-        }),
+        return http.Response(
+          jsonEncode([
+            {
+              'translations': [
+                {'text': 'bonjour', 'to': 'fr'},
+                {'text': 'xin chào', 'to': 'vi'},
+              ],
+            },
+            {
+              'translations': [
+                {'text': 'bonjour', 'to': 'fr'},
+                {'text': 'chào buổi sáng', 'to': 'vi'},
+              ],
+            },
+          ]),
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
+      final result = await translate(
+        const ['hello', 'good morning'],
+        key: key,
+        region: region,
+        baseLanguage: 'en',
+        languages: const ['fr', 'vi'],
+        client: client,
       );
 
       final translations = result.unwrap();
@@ -104,35 +95,38 @@ void main() {
 
   group('detect', () {
     test('parses primary and alternative detections', () async {
-      final result = await http.runWithClient(
-        () => detect(const ['bonjour'], key: key, region: region),
-        () => MockClient((request) async {
-          expect(request.method, 'POST');
-          expect(request.url.path, '/detect');
-          expect(jsonDecode(request.body), [
-            {'text': 'bonjour'},
-          ]);
+      final client = MockClient((request) async {
+        expect(request.method, 'POST');
+        expect(request.url.path, '/detect');
+        expect(jsonDecode(request.body), [
+          {'text': 'bonjour'},
+        ]);
 
-          return http.Response(
-            jsonEncode([
-              {
-                'language': 'fr',
-                'score': 0.95,
-                'isTranslationSupported': true,
-                'isTransliterationSupported': false,
-                'alternatives': [
-                  {
-                    'language': 'en',
-                    'score': 0.05,
-                    'isTranslationSupported': true,
-                    'isTransliterationSupported': false,
-                  },
-                ],
-              },
-            ]),
-            200,
-          );
-        }),
+        return http.Response(
+          jsonEncode([
+            {
+              'language': 'fr',
+              'score': 0.95,
+              'isTranslationSupported': true,
+              'isTransliterationSupported': false,
+              'alternatives': [
+                {
+                  'language': 'en',
+                  'score': 0.05,
+                  'isTranslationSupported': true,
+                  'isTransliterationSupported': false,
+                },
+              ],
+            },
+          ]),
+          200,
+        );
+      });
+      final result = await detect(
+        const ['bonjour'],
+        key: key,
+        region: region,
+        client: client,
       );
 
       final detection = result.unwrap().single;
@@ -144,30 +138,29 @@ void main() {
 
   group('transliterate', () {
     test('parses transliterations with their source text', () async {
-      final result = await http.runWithClient(
-        () => transliterate(
-          const ['konnichiwa'],
-          key: key,
-          region: region,
-          language: 'ja',
-          fromScript: 'Latn',
-          toScript: 'Jpan',
-        ),
-        () => MockClient((request) async {
-          expect(request.method, 'POST');
-          expect(request.url.path, '/transliterate');
-          expect(request.url.queryParameters['language'], 'ja');
-          expect(request.url.queryParameters['fromScript'], 'Latn');
-          expect(request.url.queryParameters['toScript'], 'Jpan');
+      final client = MockClient((request) async {
+        expect(request.method, 'POST');
+        expect(request.url.path, '/transliterate');
+        expect(request.url.queryParameters['language'], 'ja');
+        expect(request.url.queryParameters['fromScript'], 'Latn');
+        expect(request.url.queryParameters['toScript'], 'Jpan');
 
-          return http.Response(
-            jsonEncode([
-              {'text': 'こんにちわ', 'script': 'Jpan'},
-            ]),
-            200,
-            headers: {'content-type': 'application/json; charset=utf-8'},
-          );
-        }),
+        return http.Response(
+          jsonEncode([
+            {'text': 'こんにちわ', 'script': 'Jpan'},
+          ]),
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
+      final result = await transliterate(
+        const ['konnichiwa'],
+        key: key,
+        region: region,
+        language: 'ja',
+        fromScript: 'Latn',
+        toScript: 'Jpan',
+        client: client,
       );
 
       final transliteration = result.unwrap();
@@ -178,22 +171,25 @@ void main() {
 
   group('breakSentence', () {
     test('splits text using the lengths returned by Azure', () async {
-      final result = await http.runWithClient(
-        () => breakSentence(const ['Hello. World.'], key: key, region: region),
-        () => MockClient((request) async {
-          expect(request.method, 'POST');
-          expect(request.url.path, '/breaksentence');
+      final client = MockClient((request) async {
+        expect(request.method, 'POST');
+        expect(request.url.path, '/breaksentence');
 
-          return http.Response(
-            jsonEncode([
-              {
-                'sentLen': [7, 6],
-                'detectedLanguage': {'language': 'en', 'score': 1},
-              },
-            ]),
-            200,
-          );
-        }),
+        return http.Response(
+          jsonEncode([
+            {
+              'sentLen': [7, 6],
+              'detectedLanguage': {'language': 'en', 'score': 1},
+            },
+          ]),
+          200,
+        );
+      });
+      final result = await breakSentence(
+        const ['Hello. World.'],
+        key: key,
+        region: region,
+        client: client,
       );
 
       final brokenSentence = result.unwrap().single;
@@ -203,17 +199,15 @@ void main() {
   });
 
   test('returns Azure error details for unsuccessful responses', () async {
-    final result = await http.runWithClient(
-      languages,
-      () => MockClient(
-        (_) async => http.Response(
-          jsonEncode({
-            'error': {'code': 400001, 'message': 'Invalid request.'},
-          }),
-          400,
-        ),
+    final client = MockClient(
+      (_) async => http.Response(
+        jsonEncode({
+          'error': {'code': 400001, 'message': 'Invalid request.'},
+        }),
+        400,
       ),
     );
+    final result = await languages(client: client);
 
     final error = result.unwrapError();
     expect(error.httpCode, 400);

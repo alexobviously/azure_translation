@@ -14,6 +14,7 @@ Future<Result<TransliterationResult, AzureTranslationError>> transliterate(
   required String language,
   required String fromScript,
   required String toScript,
+  http.Client? client,
 }) async {
   const endpoint =
       'https://api.cognitive.microsofttranslator.com/transliterate';
@@ -38,7 +39,8 @@ Future<Result<TransliterationResult, AzureTranslationError>> transliterate(
 
   final texts = text.map((e) => {'text': e}).toList();
 
-  final res = await http.post(uri, headers: headers, body: jsonEncode(texts));
+  final post = client?.post ?? http.post;
+  final res = await post(uri, headers: headers, body: jsonEncode(texts));
 
   if (res.statusCode != 200) {
     return Result.error(AzureTranslationError.fromResponse(res));

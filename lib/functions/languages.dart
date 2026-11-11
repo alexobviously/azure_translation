@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 Future<Result<LanguageList, AzureTranslationError>> languages({
   String? baseLanguage,
   Iterable<LanguageScope>? scopes,
+  http.Client? client,
 }) async {
   const endpoint = 'https://api.cognitive.microsofttranslator.com/languages';
   scopes = scopes?.toSet();
@@ -25,7 +26,8 @@ Future<Result<LanguageList, AzureTranslationError>> languages({
 
   final headers = {if (baseLanguage != null) 'Accept-Language': baseLanguage};
 
-  final res = await http.get(uri, headers: headers);
+  final get = client?.get ?? http.get;
+  final res = await get(uri, headers: headers);
 
   if (res.statusCode != 200) {
     return Result.error(AzureTranslationError.fromResponse(res));

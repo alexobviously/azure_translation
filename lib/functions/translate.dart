@@ -14,6 +14,7 @@ Future<Result<List<TranslationResult>, AzureTranslationError>> translate(
   required String region,
   String? baseLanguage,
   required List<String> languages,
+  http.Client? client,
 }) async {
   const endpoint = 'https://api.cognitive.microsofttranslator.com/translate';
   final List<(String, String)> queryParams = [
@@ -33,7 +34,8 @@ Future<Result<List<TranslationResult>, AzureTranslationError>> translate(
 
   final texts = text.map((e) => {'text': e}).toList();
 
-  final res = await http.post(uri, headers: headers, body: jsonEncode(texts));
+  final post = client?.post ?? http.post;
+  final res = await post(uri, headers: headers, body: jsonEncode(texts));
 
   if (res.statusCode != 200) {
     return Result.error(AzureTranslationError.fromResponse(res));

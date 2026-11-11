@@ -8,6 +8,7 @@ Future<Result<List<DetectionResult>, AzureTranslationError>> detect(
   List<String> text, {
   required String key,
   required String region,
+  http.Client? client,
 }) async {
   const endpoint =
       'https://api.cognitive.microsofttranslator.com/'
@@ -21,7 +22,8 @@ Future<Result<List<DetectionResult>, AzureTranslationError>> detect(
 
   final texts = text.map((e) => {'text': e}).toList();
 
-  final res = await http.post(
+  final post = client?.post ?? http.post;
+  final res = await post(
     Uri.parse(endpoint),
     headers: headers,
     body: jsonEncode(texts),
