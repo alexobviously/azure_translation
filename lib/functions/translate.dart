@@ -16,15 +16,11 @@ Future<Result<List<TranslationResult>, AzureTranslationError>> translate(
   required List<String> languages,
   http.Client? client,
 }) async {
-  const endpoint = 'https://api.cognitive.microsofttranslator.com/translate';
-  final List<(String, String)> queryParams = [
-    ('api-version', AzureTranslation.apiVersion),
-    ...languages.map((e) => ('to', e)),
-    if (baseLanguage != null) ('from', baseLanguage),
-  ];
-
-  final paramString = queryParams.map((e) => '${e.$1}=${e.$2}').join('&');
-  final uri = Uri.parse('$endpoint?$paramString');
+  final uri = Uri.https('api.cognitive.microsofttranslator.com', '/translate', {
+    'api-version': AzureTranslation.apiVersion,
+    'to': languages,
+    'from': ?baseLanguage,
+  });
 
   final headers = {
     'Ocp-Apim-Subscription-Key': key,
@@ -41,9 +37,10 @@ Future<Result<List<TranslationResult>, AzureTranslationError>> translate(
     return Result.error(AzureTranslationError.fromResponse(res));
   }
 
+  final json = jsonDecode(utf8.decode(res.bodyBytes)) as List<dynamic>;
   return Result.ok(
     List<TranslationResult>.from(
-      (jsonDecode(res.body) as List).indexed.map(
+      json.indexed.map(
         (e) => TranslationResult.fromJson({...e.$2, 'text': text[e.$1]}),
       ),
     ),

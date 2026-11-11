@@ -5,6 +5,7 @@
 - Add CI checks for formatting, analysis, and tests.
 - Fix parsing of alternative language detections.
 - Allow injecting a HTTP client into every API function.
+- Encode query parameters safely and decode JSON responses as UTF-8.
 
 ### 1.0.0
 - Stable release!

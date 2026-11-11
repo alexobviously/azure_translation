@@ -12,17 +12,15 @@ Future<Result<List<BrokenSentence>, AzureTranslationError>> breakSentence(
   required String region,
   http.Client? client,
 }) async {
-  const endpoint =
-      'https://api.cognitive.microsofttranslator.com/breaksentence';
-
-  final queryParams = {
-    'api-version': AzureTranslation.apiVersion,
-    'language': ?language,
-    'script': ?script,
-  };
-  final paramString = queryParams.entries
-      .map((e) => '${e.key}=${e.value}')
-      .join('&');
+  final uri = Uri.https(
+    'api.cognitive.microsofttranslator.com',
+    '/breaksentence',
+    {
+      'api-version': AzureTranslation.apiVersion,
+      'language': ?language,
+      'script': ?script,
+    },
+  );
 
   final headers = {
     'Ocp-Apim-Subscription-Key': key,
@@ -33,18 +31,15 @@ Future<Result<List<BrokenSentence>, AzureTranslationError>> breakSentence(
   final texts = text.map((e) => {'text': e}).toList();
 
   final post = client?.post ?? http.post;
-  final res = await post(
-    Uri.parse('$endpoint?$paramString'),
-    headers: headers,
-    body: jsonEncode(texts),
-  );
+  final res = await post(uri, headers: headers, body: jsonEncode(texts));
 
   if (res.statusCode != 200) {
     return Result.error(AzureTranslationError.fromResponse(res));
   }
 
+  final json = jsonDecode(utf8.decode(res.bodyBytes)) as List<dynamic>;
   return Result.ok(
-    (jsonDecode(res.body) as List).indexed
+    json.indexed
         .map((e) => BrokenSentence.fromJson({...e.$2, 'text': text[e.$1]}))
         .toList(),
   );

@@ -18,8 +18,9 @@ class AzureTranslationError {
     String? message;
 
     try {
-      // if anyone can think of a less gross way of doing this lmk lmao
-      final error = jsonDecode(response.body)['error']! as Map<String, dynamic>;
+      final body =
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      final error = body['error'] as Map<String, dynamic>;
       code = error['code'];
       message = error['message'];
     } catch (_) {}

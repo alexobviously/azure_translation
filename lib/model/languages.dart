@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 /// A detected language result that will be returned in cases where `translate`
 /// is called without explicitly specifying the base language.
 class DetectedLanguage {
@@ -107,8 +105,8 @@ class Language extends LanguageBase {
 
   factory Language.fromJson(Map<String, dynamic> json) => Language(
     code: json['code'],
-    name: utf8.decode(json['name'].codeUnits),
-    nativeName: utf8.decode(json['nativeName'].codeUnits),
+    name: json['name'],
+    nativeName: json['nativeName'],
     scriptDirection: ScriptDirection.fromString(json['dir']),
   );
 
@@ -131,8 +129,8 @@ class DictionaryLanguage extends Language {
   factory DictionaryLanguage.fromJson(Map<String, dynamic> json) =>
       DictionaryLanguage(
         code: json['code'],
-        name: utf8.decode(json['name'].codeUnits),
-        nativeName: utf8.decode(json['nativeName'].codeUnits),
+        name: json['name'],
+        nativeName: json['nativeName'],
         scriptDirection: ScriptDirection.fromString(json['dir']),
         translations: (json['translations'] as List<dynamic>)
             .map((e) => Language.fromJson(e))
@@ -158,8 +156,8 @@ class TranslitLanguage extends LanguageBase {
   factory TranslitLanguage.fromJson(Map<String, dynamic> json) =>
       TranslitLanguage(
         code: json['code'],
-        name: utf8.decode(json['name'].codeUnits),
-        nativeName: utf8.decode(json['nativeName'].codeUnits),
+        name: json['name'],
+        nativeName: json['nativeName'],
         scripts: (json['scripts'] as List<dynamic>)
             .map((e) => ScriptLanguage.fromJson(e))
             .toList(),
@@ -188,8 +186,8 @@ class ScriptLanguage extends Language {
 
   factory ScriptLanguage.fromJson(Map<String, dynamic> json) => ScriptLanguage(
     code: json['code'],
-    name: utf8.decode(json['name'].codeUnits),
-    nativeName: utf8.decode(json['nativeName'].codeUnits),
+    name: json['name'],
+    nativeName: json['nativeName'],
     scriptDirection: ScriptDirection.fromString(json['dir']),
     toScripts: (json['toScripts'] as List<dynamic>)
         .map((e) => Language.fromJson(e))

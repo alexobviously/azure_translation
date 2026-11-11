@@ -16,20 +16,16 @@ Future<Result<TransliterationResult, AzureTranslationError>> transliterate(
   required String toScript,
   http.Client? client,
 }) async {
-  const endpoint =
-      'https://api.cognitive.microsofttranslator.com/transliterate';
-
-  final queryParams = {
-    'api-version': AzureTranslation.apiVersion,
-    'language': language,
-    'fromScript': fromScript,
-    'toScript': toScript,
-  };
-
-  final paramString = queryParams.entries
-      .map((e) => '${e.key}=${e.value}')
-      .join('&');
-  final uri = Uri.parse('$endpoint?$paramString');
+  final uri = Uri.https(
+    'api.cognitive.microsofttranslator.com',
+    '/transliterate',
+    {
+      'api-version': AzureTranslation.apiVersion,
+      'language': language,
+      'fromScript': fromScript,
+      'toScript': toScript,
+    },
+  );
 
   final headers = {
     'Ocp-Apim-Subscription-Key': key,
@@ -46,13 +42,14 @@ Future<Result<TransliterationResult, AzureTranslationError>> transliterate(
     return Result.error(AzureTranslationError.fromResponse(res));
   }
 
+  final json = jsonDecode(utf8.decode(res.bodyBytes)) as List<dynamic>;
   return Result.ok(
     TransliterationResult(
       language: language,
       fromScript: fromScript,
       toScript: toScript,
       transliterations: [
-        ...(jsonDecode(res.body) as List).indexed.map(
+        ...json.indexed.map(
           (e) => Transliteration.fromJson({...e.$2, 'sourceText': text[e.$1]}),
         ),
       ],

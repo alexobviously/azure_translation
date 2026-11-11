@@ -14,15 +14,16 @@ Future<Result<LanguageList, AzureTranslationError>> languages({
   Iterable<LanguageScope>? scopes,
   http.Client? client,
 }) async {
-  const endpoint = 'https://api.cognitive.microsofttranslator.com/languages';
-  scopes = scopes?.toSet();
-  final List<(String, String)> queryParams = [
-    ('api-version', AzureTranslation.apiVersion),
-    if (scopes?.isNotEmpty ?? false)
-      ('scope', scopes!.map((e) => e.name).join(',')),
-  ];
-  final paramString = queryParams.map((e) => '${e.$1}=${e.$2}').join('&');
-  final uri = Uri.parse('$endpoint?$paramString');
+  final uniqueScopes = scopes?.toSet();
+  final scope = switch (uniqueScopes) {
+    final scopes? when scopes.isNotEmpty =>
+      scopes.map((scope) => scope.name).join(','),
+    _ => null,
+  };
+  final uri = Uri.https('api.cognitive.microsofttranslator.com', '/languages', {
+    'api-version': AzureTranslation.apiVersion,
+    'scope': ?scope,
+  });
 
   final headers = {'Accept-Language': ?baseLanguage};
 
@@ -33,6 +34,6 @@ Future<Result<LanguageList, AzureTranslationError>> languages({
     return Result.error(AzureTranslationError.fromResponse(res));
   }
 
-  final json = jsonDecode(res.body);
+  final json = jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
   return Result.ok(LanguageList.fromJson(json));
 }

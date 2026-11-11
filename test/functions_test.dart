@@ -21,10 +21,11 @@ void main() {
         return http.Response(
           jsonEncode({
             'translation': {
-              'en': {'name': 'English', 'nativeName': 'English', 'dir': 'ltr'},
+              'fr': {'name': 'French', 'nativeName': 'Français', 'dir': 'ltr'},
             },
           }),
           200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
         );
       });
       final result = await languages(
@@ -35,7 +36,7 @@ void main() {
 
       final languageList = result.unwrap();
       expect(languageList.translation, hasLength(1));
-      expect(languageList.translationLanguage('en')?.name, 'English');
+      expect(languageList.translationLanguage('fr')?.nativeName, 'Français');
       expect(languageList.transliteration, isNull);
       expect(languageList.dictionary, isNull);
     });
@@ -47,8 +48,11 @@ void main() {
         expect(request.method, 'POST');
         expect(request.url.path, '/translate');
         expect(request.url.queryParameters['api-version'], '3.0');
-        expect(request.url.queryParameters['from'], 'en');
-        expect(request.url.queryParametersAll['to'], ['fr', 'vi']);
+        expect(request.url.queryParameters['from'], 'en&category=formal');
+        expect(request.url.queryParametersAll['to'], [
+          'fr&profanityAction=Marked',
+          'vi',
+        ]);
         expect(request.headers['Ocp-Apim-Subscription-Key'], key);
         expect(request.headers['Ocp-Apim-Subscription-Region'], region);
         expect(jsonDecode(request.body), [
@@ -79,8 +83,8 @@ void main() {
         const ['hello', 'good morning'],
         key: key,
         region: region,
-        baseLanguage: 'en',
-        languages: const ['fr', 'vi'],
+        baseLanguage: 'en&category=formal',
+        languages: const ['fr&profanityAction=Marked', 'vi'],
         client: client,
       );
 
